@@ -18,6 +18,8 @@ public class TablaHashLinearProbing<K extends Comparable<K>, V extends Comparabl
 
 	public TablaHashLinearProbing(int maxSize) {
 		elements = new ArregloDinamico<>(maxSize);
+		keys = new ArregloDinamico<>(maxSize / 3);
+		values = new ArregloDinamico<>(maxSize / 3);
 		p = nextPrime(maxSize * 7);
 		this.maxSize = maxSize;
 		this.size = 0;
@@ -68,8 +70,14 @@ public class TablaHashLinearProbing<K extends Comparable<K>, V extends Comparabl
 			pos = (pos == this.size) ? 0 : pos + 1;
 			nodo = elements.getElement(pos);
 		}
+		values.addLast(value);
+		keys.addLast(key);
 		elements.insertElement(newNode, pos);
 		size++;
+		Double weight = Double.valueOf(size) / Double.valueOf(maxSize);
+		if (weight > 0.5) {
+			rehash();
+		}
 	}
 
 	@Override
@@ -150,7 +158,24 @@ public class TablaHashLinearProbing<K extends Comparable<K>, V extends Comparabl
 	public ILista<V> valueSet() {
 		return values;
 	}
-	
+
+	public void rehash() {
+		TablaHashLinearProbing<K, V> newTable = new TablaHashLinearProbing<K, V>(maxSize * 2);
+		for (int i = 0; i < keys.size(); i++) {
+			K key = keys.getElement(i);
+			V element = get(key);
+			newTable.put(key, element);
+		}
+		this.maxSize = newTable.maxSize;
+		this.size = newTable.size;
+		this.a = newTable.a;
+		this.b = newTable.b;
+		this.p = newTable.p;
+		this.elements = newTable.elements;
+		this.keys = newTable.keys;
+		this.values = newTable.values;
+	}
+
 	@Override
 	public String toString() {
 		String res = "";

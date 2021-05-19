@@ -4,12 +4,12 @@ public class Edge<K extends Comparable<K>, V> implements Comparable<Edge<K, V>> 
 
 	Vertex<K, V> origin;
 	Vertex<K, V> destination;
-	float weigth;
+	float weight;
 
 	public Edge(Vertex<K, V> origin, Vertex<K, V> destination, float weigth) {
 		this.origin = origin;
 		this.destination = destination;
-		this.weigth = weigth;
+		this.weight = weigth;
 	}
 
 	public Vertex<K, V> getOrigin() {
@@ -28,18 +28,22 @@ public class Edge<K extends Comparable<K>, V> implements Comparable<Edge<K, V>> 
 		this.destination = destination;
 	}
 
-	public float getWeigth() {
-		return weigth;
-	}
-
-	public void setWeigth(float weigth) {
-		this.weigth = weigth;
+	public float getWeight() {
+		return weight;
 	}
 
 	@Override
-	public int compareTo(Edge arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int compareTo(Edge<K, V> arg0) {
+		return this.origin.compareTo(arg0.origin) + destination.compareTo(arg0.destination);
+	}
+	
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+	
+	@Override
+	public String toString() {
+		return origin.toString() + " <-> " + destination.toString();
 	}
 
 }

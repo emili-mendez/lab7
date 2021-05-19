@@ -7,19 +7,14 @@ import model.utils.Ordenamiento;
 public class TablaHashSeparateChaining<K extends Comparable<K>, V extends Comparable<V>>
 		implements ITablaSimbolos<K, V> {
 
-	private int maxSize;
-
-	public int getMaxSize() {
-		return maxSize;
-	}
-
-	private int size;
-	private int a;
-	private int b;
-	private int p;
-	ILista<ILista<NodoTS<K, V>>> elements;
-	ILista<K> keys;
-	ILista<V> values;
+	public int maxSize;
+	public int size;
+	public int a;
+	public int b;
+	public int p;
+	public ILista<ILista<NodoTS<K, V>>> elements;
+	public ILista<K> keys;
+	public ILista<V> values;
 
 	public TablaHashSeparateChaining(int maxSize) {
 		elements = new ArregloDinamico<>(maxSize);
@@ -35,9 +30,13 @@ public class TablaHashSeparateChaining<K extends Comparable<K>, V extends Compar
 		}
 	}
 
+	public int getMaxSize() {
+		return maxSize;
+	}
+
 	public int hash(K key) {
 		int hash = key.hashCode();
-		return (Math.abs((a * hash + b) % p) % maxSize) -1;
+		return (Math.abs((a * hash + b) % p) % maxSize) - 1;
 	}
 
 	static int nextPrime(int N) {
@@ -74,9 +73,15 @@ public class TablaHashSeparateChaining<K extends Comparable<K>, V extends Compar
 		NodoTS<K, V> newNode = new NodoTS<>(key, value);
 		int pos = hash(key);
 		ILista<NodoTS<K, V>> subList = elements.getElement(pos);
-		if (subList == null) {return;}
+		if (subList == null) {
+			return;
+		}
 		subList.addLast(newNode);
 		size++;
+		Double weight = Double.valueOf(size) / Double.valueOf(maxSize);
+		if (weight > 0.75) {
+			rehash();
+		}
 	}
 
 	@Override
@@ -126,6 +131,23 @@ public class TablaHashSeparateChaining<K extends Comparable<K>, V extends Compar
 	@Override
 	public ILista<V> valueSet() {
 		return values;
+	}
+
+	public void rehash() {
+		TablaHashSeparateChaining<K, V> newTable = new TablaHashSeparateChaining<K, V>(maxSize * 2);
+		for (int i = 0; i < keys.size(); i++) {
+			K key = keys.getElement(i);
+			V element = get(key);
+			newTable.put(key, element);
+		}
+		this.maxSize = newTable.maxSize;
+		this.size = newTable.size;
+		this.a = newTable.a;
+		this.b = newTable.b;
+		this.p = newTable.p;
+		this.elements = newTable.elements;
+		this.keys = newTable.keys;
+		this.values = newTable.values;
 	}
 
 	@Override

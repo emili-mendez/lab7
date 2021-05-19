@@ -42,13 +42,12 @@ public class Vertex <K extends Comparable<K>, V> implements Comparable<Vertex<K,
 	public Vertex(K key, V value) {
 		this.key = key;
 		this.value = value;
-		
+		edges = new ArregloDinamico<Edge<K,V>>(10);
 	}
 
 	@Override
 	public int compareTo(Vertex<K, V> arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.key.compareTo(arg0.key);
 	}
 
 	public void dfs(Edge<K, V> edge) {
@@ -75,5 +74,37 @@ public class Vertex <K extends Comparable<K>, V> implements Comparable<Vertex<K,
 				}
 			}
 		}
+	}
+	
+	public int outdegree() {
+		return edges.size();
+	}
+	
+	public int indegree() {
+		return edges.size();
+	}
+	
+	public Edge<K,V> getEdge(K vertex) {
+		for (int i = 0; i < edges.size(); i++) {
+			Edge<K,V> curr = edges.getElement(i);
+			if (curr.destination.key.compareTo(vertex) == 0) {
+				return curr;
+			}
+		}
+		return null;
+	}
+	
+	public ILista<Vertex<K,V>> vertices() {
+		ILista<Vertex<K,V>> vertexes = new ArregloDinamico<Vertex<K,V>>(edges.size());
+		for (int i = 0; i < edges.size(); i++) {
+			Edge<K,V> curr = edges.getElement(i);
+			vertexes.addLast(curr.destination);
+		}
+		return vertexes;
+	}
+	
+	@Override
+	public String toString() {
+		return key.toString();
 	}
 }
